@@ -6,7 +6,9 @@ chrome.commands.onCommand.addListener(function (command, tab) {
         chrome.tabs.sendMessage(tab.id, {action: "make_note"}, function(response) {
             console.log(response)
             if (response === true) {
-                console.log("Event triggered successfully")
+                console.log("Event: make_note triggered successfully")
+            }else{
+                console.log("Unable to trigger Event: make_note")
             }
         });
     } else {
