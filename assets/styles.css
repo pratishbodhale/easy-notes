@@ -1,0 +1,10 @@
+.collapsible-button{
+  width: 100%;
+}
+
+
+.note-tag{
+  right: 1rem;
+  position: absolute;
+  margin-top: 5px;
+}

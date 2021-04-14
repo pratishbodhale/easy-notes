@@ -12,10 +12,9 @@ function initMakeNoteHandler() {
     });
 }
 
-function persistNoteInStorage(tag, note) {
+function persistNoteInStorage(tag, note, callback) {
     chrome.storage.local.get(['easy-note-data'], function (results) {
         notesData = results['easy-note-data']
-        console.log('local: Value currently is easy-note-data:' + JSON.stringify(notesData['easy-note-data']));
 
         if(notesData[tag] === undefined){
             notesData[tag] = [note]
@@ -24,15 +23,17 @@ function persistNoteInStorage(tag, note) {
         }
 
         chrome.storage.local.set({'easy-note-data': notesData}, function () {
-            console.log('Value is set to easy-note-data:' + JSON.stringify(notesData));
+            if(callback !== undefined) {
+                callback();
+            }
         });
     });
 }
 
+// TODO: Save tags under another key in storage to optimise computation each time new note needs to be saved
 function getTags(callback) {
     // TODO: Change local -> sync for accross devies sync
     chrome.storage.local.get(['easy-note-data'], function (result) {
-        console.log('local: Value currently is easy-note-data:' + JSON.stringify(result['easy-note-data']));
         callback(Object.keys(result['easy-note-data']));
     });
 }
@@ -41,7 +42,6 @@ function displayExistingTags(tags){
     var datalist = document.createElement('datalist');
     datalist.setAttribute("id", "en-tags-list");
 
-    console.log(tags);
     tags.forEach(tag => {
         var optionT = document.createElement('option');
         optionT.setAttribute("value", tag);
@@ -55,10 +55,13 @@ function displayExistingTags(tags){
 function handleMakeNote() {
     const selection = window.getSelection();
     if (selection.toString() !== "") {
-
+        
+        var dateTimeNow = new Date();
         note = {
             dataString: selection.toString(),
-            url: window.location.href
+            url: window.location.href,
+            title: document.title,
+            timeStamp: dateTimeNow.getTime()
         }
 
         //Get a the selected content, in a range object
@@ -81,7 +84,6 @@ function handleMakeNote() {
 
             input.addEventListener("keydown", function (event) {
 
-                console.log("Event key: ", event.key);
                 if (event.key === "Enter") {
                     // Cancel the default action, if needed
                     event.preventDefault();
@@ -100,7 +102,6 @@ function handleMakeNote() {
 
 // TODO:: Give option to take note on text selection
 function textSelectEvent() {
-    console.log("Event loaded")
     const p = document.body
     p.addEventListener('mouseup', (e) => {
         const selection = window.getSelection().toString();

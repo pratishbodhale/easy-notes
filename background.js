@@ -15,3 +15,7 @@ chrome.commands.onCommand.addListener(function (command, tab) {
         console.log("Command event not found")
     }
 });
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+    chrome.tabs.create({'url': chrome.extension.getURL('index.html'), 'selected': true});
+});
