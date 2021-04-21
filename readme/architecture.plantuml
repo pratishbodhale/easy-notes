@@ -1,0 +1,25 @@
+@startuml
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/cerulean/puml-theme-cerulean.puml
+
+hide footbox
+
+actor user as User
+participant background.js as Background
+participant content_script.js as ContentScript
+participant web_ui  as Web
+database chrome_storage as ChromeStorage
+
+
+User -> Background : On MakeNote Command \n(Registered in manifest)
+Background -> ContentScript :  On Message
+ContentScript -> ChromeStorage : Process selected text and \nPersist in storage with tag 
+
+ChromeStorage --> ContentScript : Success
+
+
+User -> Background : On Click extension button
+Background -> Web : New tab with index.html
+Web -> ChromeStorage : Fetch all notes (index.js)
+ChromeStorage --> Web : List notes
+
+@enduml
