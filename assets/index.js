@@ -1,11 +1,21 @@
+function classForTag(tag){
+    return tag.toLowerCase().replace(" ", "_")
+}
+
 function displayTagsIndex(tags){
     checkbox_container = $("#checkbox-container");
- 
+    
+    all_checkbox = $('<div class="form-check form-check-inline">\
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" data-filter="all_elements" checked="true">\
+        <label class="form-check-label" for="inlineCheckbox1">all</label>\
+    </div>')
+    checkbox_container.append(all_checkbox);
+
     tags.forEach(tag => {
-        var checkbox = $("<div class='form-check form-check-inline'>\
-        <input class='form-check-input' type='checkbox' id='inlineCheckbox1' value='option1'>\
-        <label class='form-check-label' for='inlineCheckbox1'>"+tag+"</label>\
-    </div>");
+        var checkbox = $('<div class="form-check form-check-inline">\
+        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" data-filter="'+classForTag(tag)+'">\
+        <label class="form-check-label" for="inlineCheckbox1">'+tag+'</label>\
+    </div>');
         checkbox_container.append(checkbox);
     });
 }
@@ -18,15 +28,18 @@ function displayNotesIndex(notes){
     for(title in notes){
         var note_id = "note-"+idx.toString();
         var note_data = "";
-        
+        var title_tags = [];
+
         notes[title].forEach((note) => {
             note_data += '<div class="card" style="width: 100%">\
             <div class="card-body">\
               <p class="card-text">'+note.dataString+' <span class="badge bg-warning text-dark note-tag">'+note.tag+'</span> </p>\
             </div>\
           </div>';
+
+          title_tags.indexOf(classForTag(note.tag)) === -1 ? title_tags.push(classForTag(note.tag)): nil;
         })
-        var note_elem = $('<div class="note-area mb-2">\
+        var note_elem = $('<div class="note-area mb-2" data-filter="'+title_tags.join(" ")+'">\
         <div>\
           <button class="btn btn-light collapsible-button" type="button" data-bs-toggle="collapse" data-bs-target="#'+note_id+'" aria-expanded="false" aria-controls="'+note_id+'" >\
             '+title+' <a href="'+notes[title][0].url+'"><i class="bi bi-arrow-up-right"></i></a>\

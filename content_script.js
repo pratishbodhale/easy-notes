@@ -14,8 +14,11 @@ function initMakeNoteHandler() {
 
 function persistNoteInStorage(tag, note, callback) {
     chrome.storage.local.get(['easy-note-data'], function (results) {
-        notesData = results['easy-note-data']
-
+        notesData = {};
+        if(results.hasOwnProperty('easy-note-data')){
+            notesData = results['easy-note-data'];
+        }
+        
         if(notesData[tag] === undefined){
             notesData[tag] = [note]
         }else{
@@ -34,6 +37,10 @@ function persistNoteInStorage(tag, note, callback) {
 function getTags(callback) {
     // TODO: Change local -> sync for accross devies sync
     chrome.storage.local.get(['easy-note-data'], function (result) {
+        if(!result.hasOwnProperty('easy-note-data')){
+            callback([]);
+            return;
+        }
         callback(Object.keys(result['easy-note-data']));
     });
 }
